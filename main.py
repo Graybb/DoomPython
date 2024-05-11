@@ -3,8 +3,6 @@ import sys
 from settings import *
 from map import *
 from player import *
-from raycasting import *
-from object_renderer import *
 
 
 
@@ -22,21 +20,27 @@ class Game:
     def new_game(self):
         self.map = Map(self)
         self.player = Player(self)
-        self.object_renderer = ObjectRenderer(self)
-        self.raycasting = RayCasting(self)
+        self.projList = []
 
     def update(self):
         self.player.update()
-        self.raycasting.update()
         pg.display.flip()
         self.delta_time = self.clock.tick(FPS)
         pg.display.set_caption(f'{self.clock.get_fps():.1f}')
-    
+        self.updateProjectiles()
+
+    def updateProjectiles(self):
+        for projectile in self.projList:
+            projectile.update()
+            if projectile.duration == 0:
+                self.projList.pop(self.projList.index(projectile))
+
     def draw(self):
         self.screen.fill('black')
-        self.object_renderer.draw()
-        #self.map.draw()
-        #self.player.draw()
+        self.map.draw()
+        self.player.draw()
+        for x in self.projList:
+            x.draw()
 
     def check_events(self):
         for event in pg.event.get():

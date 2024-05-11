@@ -1,40 +1,60 @@
 from settings import *
 import pygame as pg
+from projectile import *
 import math
 class Player:
     def __init__(self,game):
         self.game = game
         self.x, self.y = PLAYER_POS
-        self.angle = PLAYER_ANGLE
+        self.projectileSpeedModifier = 1
+        self.cooldownCount = 0
     
+    def action(self):
+        speed = self.projectileSpeedModifier
+        speed_y = speed*0
+        speed_x = speed*1
+        keys=  pg.key.get_pressed()
+        if keys[pg.K_UP]:
+            self.cooldown()
+            self.game.projList.append(projectile(self.game,self.x, self.y, 10, 'blue', speed_y,-speed_x, PROJECTILE_SPEED*self.projectileSpeedModifier))
+        elif keys[pg.K_DOWN]:
+            self.cooldown()
+            self.game.projList.append(projectile(self.game,self.x, self.y, 10, 'blue', -speed_y,speed_x, PROJECTILE_SPEED*self.projectileSpeedModifier))
+        elif keys[pg.K_LEFT]:
+            self.cooldown()
+            self.game.projList.append(projectile(self.game,self.x, self.y, 10, 'blue', -speed_x,-speed_y, PROJECTILE_SPEED*self.projectileSpeedModifier))
+        elif keys[pg.K_RIGHT]:
+           self.cooldown()
+           self.game.projList.append(projectile(self.game,self.x,self.y, 10, 'blue', speed_x,speed_y, PROJECTILE_SPEED*self.projectileSpeedModifier))
+        elif keys[pg.K_SPACE]:
+           self.cooldown()
+           None
+
     def movement(self):
-        sin_a = math.sin(self.angle)
-        cos_a = math.cos(self.angle)
         dx,dy = 0,0
         speed = PLAYER_SPEED*self.game.delta_time
-        speed_sin = speed*sin_a
-        speed_cos = speed*cos_a
+        speed_y = speed*0
+        speed_x = speed*1
         keys=  pg.key.get_pressed()
-        if keys[pg.K_w]:
-            dx += speed_cos
-            dy += speed_sin
-        if keys[pg.K_s]:
-            dx += -speed_cos
-            dy += -speed_sin
-        if keys[pg.K_a]:
-            dx += speed_sin
-            dy += -speed_cos
         if keys[pg.K_d]:
-            dx += -speed_sin
-            dy += speed_cos
-            
+            dx += speed_x
+            dy += speed_y
+        if keys[pg.K_a]:
+            dx += -speed_x
+            dy += -speed_y
+        if keys[pg.K_w]:
+            dx += speed_y
+            dy += -speed_x
+        if keys[pg.K_s]:
+            dx += -speed_y
+            dy += speed_x
+        
 
         self.check_wall_collision(dx,dy)
         #if keys[pg.K_LEFT]:
         #    self.angle -= PLAYER_ROT_SPEED * self.game.delta_time
         #if keys[pg.K_RIGHT]:
         #    self.angle += PLAYER_ROT_SPEED * self.game.delta_time
-        self.angle %= math.tau
 
     def check_wall(self,x,y):
         return (x,y) not in self.game.map.world_map
@@ -51,20 +71,21 @@ class Player:
         #            (self.x*100+WIDTH*math.cos(self.angle),
         #             self.y*100+WIDTH*math.sin(self.angle)),2)
         pg.draw.circle(self.game.screen,'green',(self.x*100,self.y*100),15)
+        
 
 
-    def mouse_control(self):
-        mx,my = pg.mouse.get_pos()
-        if mx < MOUSE_BORDER_LEFT or mx> MOUSE_BORDER_RIGHT:
-            pg.mouse.set_pos([HALF_WIDTH,HALF_HEIGHT])
-        self.rel = pg.mouse.get_rel()[0]
-        self.rel = max(-MOUSE_MAX_REL, min(MOUSE_MAX_REL,self.rel))
-        self.angle += self.rel*MOUSE_SENSITIVITY*self.game.delta_time
 
+    def cooldown(self):
+        self.cooldownCount += 15
+    def reduceCooldown(self,amount):
+        self.cooldownCount -=amount
 
     def update(self):
         self.movement()
-        self.mouse_control()
+        if(self.cooldownCount == 0):
+            self.action()
+        else:
+            self.reduceCooldown(1)
 
     @property
     def pos(self):
