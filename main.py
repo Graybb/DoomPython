@@ -3,7 +3,7 @@ import sys
 from settings import *
 from map import *
 from player import *
-
+from enemy import *
 
 
 class Game:
@@ -32,6 +32,11 @@ class Game:
         self.delta_time = self.clock.tick(FPS)
         pg.display.set_caption(f'{self.clock.get_fps():.1f}')
         self.updateProjectiles()
+        self.updateEnemies()
+
+    def updateEnemies(self):
+        for enemy in self.enemies:
+            enemy.update()
 
     def updateProjectiles(self):
         for projectile in self.projList:
@@ -45,13 +50,17 @@ class Game:
         self.player.draw()
         for x in self.projList:
             x.draw()
-
+    def spawnEnemy(self):
+        x,y = self.map.getEnemySpawnPoint()
+        self.enemies.append(Enemy(self,x,y))
 
     def check_events(self):
         for event in pg.event.get():
             if event.type == pg.QUIT or (event.type == pg.KEYDOWN and event.key == pg.K_ESCAPE):
                 pg.quit()
                 sys.exit()
+            if event.type == pg.KEYDOWN and event.key == pg.K_p:
+                self.spawnEnemy()
     
     def run(self):
         while True:

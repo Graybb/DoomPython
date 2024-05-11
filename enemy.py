@@ -1,11 +1,11 @@
 from settings import*
+import pygame as pg
 class Enemy:
-    def __init__(self,game, x, y, width, height, health= 10):
+    def __init__(self,game, x, y, radius = 15, health= 10):
         self.game = game
         self.x = x
         self.y = y
-        self.width = width
-        self.height = height
+        self.radius = radius
         self.speed = PLAYER_SPEED
         self.health = health
 
@@ -23,6 +23,11 @@ class Enemy:
     def moveToPlayer(self):
         targetX,targetY = self.game.getPlayerPos()
         self.move(targetX,targetY)
-
+    def update(self):
+        #self.checkMovement()
+        self.draw()
+    def draw(self):
+        pg.draw.circle(self.game.screen,'red',(self.x*100,self.y*100),self.radius)
+    
     def randomMovement(self):
         self.move(1,1)
