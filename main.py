@@ -20,8 +20,12 @@ class Game:
     def new_game(self):
         self.map = Map(self)
         self.player = Player(self)
+        self.enemies = []
         self.projList = []
 
+    def getPlayerPos(self):
+        return self.player.x,self.player.y
+    
     def update(self):
         self.player.update()
         pg.display.flip()
@@ -41,6 +45,7 @@ class Game:
         self.player.draw()
         for x in self.projList:
             x.draw()
+
 
     def check_events(self):
         for event in pg.event.get():

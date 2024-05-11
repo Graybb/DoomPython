@@ -16,16 +16,16 @@ class Player:
         keys=  pg.key.get_pressed()
         if keys[pg.K_UP]:
             self.cooldown()
-            self.game.projList.append(projectile(self.game,self.x, self.y, 10, 'blue', speed_y,-speed_x, PROJECTILE_SPEED*self.projectileSpeedModifier))
+            self.game.projList.append(Projectile(self.game,self.x, self.y, 10, 'blue', speed_y,-speed_x, PROJECTILE_SPEED*self.projectileSpeedModifier))
         elif keys[pg.K_DOWN]:
             self.cooldown()
-            self.game.projList.append(projectile(self.game,self.x, self.y, 10, 'blue', -speed_y,speed_x, PROJECTILE_SPEED*self.projectileSpeedModifier))
+            self.game.projList.append(Projectile(self.game,self.x, self.y, 10, 'blue', -speed_y,speed_x, PROJECTILE_SPEED*self.projectileSpeedModifier))
         elif keys[pg.K_LEFT]:
             self.cooldown()
-            self.game.projList.append(projectile(self.game,self.x, self.y, 10, 'blue', -speed_x,-speed_y, PROJECTILE_SPEED*self.projectileSpeedModifier))
+            self.game.projList.append(Projectile(self.game,self.x, self.y, 10, 'blue', -speed_x,-speed_y, PROJECTILE_SPEED*self.projectileSpeedModifier))
         elif keys[pg.K_RIGHT]:
            self.cooldown()
-           self.game.projList.append(projectile(self.game,self.x,self.y, 10, 'blue', speed_x,speed_y, PROJECTILE_SPEED*self.projectileSpeedModifier))
+           self.game.projList.append(Projectile(self.game,self.x,self.y, 10, 'blue', speed_x,speed_y, PROJECTILE_SPEED*self.projectileSpeedModifier))
         elif keys[pg.K_SPACE]:
            self.cooldown()
            None

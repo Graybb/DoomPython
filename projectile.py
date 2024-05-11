@@ -1,7 +1,7 @@
 from settings import *
 import pygame as pg
 from main import *
-class projectile:
+class Projectile:
     def __init__(self,game,x,y,radius,color,xDirection,yDirection,speed):
         self.game = game
         self.x = x
