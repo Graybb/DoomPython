@@ -22,37 +22,50 @@ class Game:
         self.player = Player(self)
         self.enemies = []
         self.projList = []
+        self.enemyLimit = 10
 
     def getPlayerPos(self):
         return self.player.x,self.player.y
     
     def update(self):
-        self.player.update()
         pg.display.flip()
         self.delta_time = self.clock.tick(FPS)
         pg.display.set_caption(f'{self.clock.get_fps():.1f}')
         self.updateProjectiles()
         self.updateEnemies()
+        self.player.update()
 
     def updateEnemies(self):
         for enemy in self.enemies:
             enemy.update()
+            if enemy.collidesWithProjectile(self.projList):
+                self.enemies.pop(self.enemies.index(enemy))
+                if self.player.cooldownCount>2: 
+                    self.player.reduceCooldown(1)
+                self.enemyLimit +=1
+        if len(self.enemies) < self.enemyLimit:
+            self.spawnEnemy()
+            
 
     def updateProjectiles(self):
         for projectile in self.projList:
             projectile.update()
-            if projectile.duration == 0:
+            if projectile.duration == 0 or projectile.collided:
                 self.projList.pop(self.projList.index(projectile))
 
     def draw(self):
         self.screen.fill('black')
         self.map.draw()
-        self.player.draw()
         for x in self.projList:
             x.draw()
+        for enemy in self.enemies:
+            enemy.draw() 
+        self.player.draw()
+        
     def spawnEnemy(self):
         x,y = self.map.getEnemySpawnPoint()
         self.enemies.append(Enemy(self,x,y))
+
 
     def check_events(self):
         for event in pg.event.get():

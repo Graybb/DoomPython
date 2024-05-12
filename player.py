@@ -7,7 +7,8 @@ class Player:
         self.game = game
         self.x, self.y = PLAYER_POS
         self.projectileSpeedModifier = 1
-        self.cooldownCount = 0
+        self.cooldownCount = 15
+        self.currentCooldown = 0
     
     def action(self):
         speed = self.projectileSpeedModifier
@@ -76,16 +77,16 @@ class Player:
 
 
     def cooldown(self):
-        self.cooldownCount += 15
+        self.currentCooldown += self.cooldownCount
     def reduceCooldown(self,amount):
         self.cooldownCount -=amount
 
     def update(self):
         self.movement()
-        if(self.cooldownCount == 0):
+        if(self.currentCooldown == 0):
             self.action()
         else:
-            self.reduceCooldown(1)
+            self.currentCooldown -=1
 
     @property
     def pos(self):
