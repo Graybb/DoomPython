@@ -42,7 +42,10 @@ class Game:
                 self.enemies.pop(self.enemies.index(enemy))
                 if self.player.cooldownCount>2: 
                     self.player.reduceCooldown(1)
-                self.enemyLimit +=1
+                if self.player.cooldownCount==1:
+                    self.player.damageScale += 1
+                if self.enemyLimit < 100:
+                    self.enemyLimit +=1
         if len(self.enemies) < self.enemyLimit:
             self.spawnEnemy()
             
@@ -61,7 +64,7 @@ class Game:
         for enemy in self.enemies:
             enemy.draw() 
         self.player.draw()
-        
+
     def spawnEnemy(self):
         x,y = self.map.getEnemySpawnPoint()
         self.enemies.append(Enemy(self,x,y))

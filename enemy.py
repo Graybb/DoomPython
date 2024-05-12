@@ -1,8 +1,9 @@
 from settings import*
 import random
 import pygame as pg
+import os
 class Enemy:
-    def __init__(self,game, x, y, radius = 15, health= 10):
+    def __init__(self,game, x, y, radius = 15, health= 5):
         self.game = game
         self.x = x
         self.y = y
@@ -13,6 +14,11 @@ class Enemy:
         self.yDirection = 0
         self.moveUntilDirectionChange = 60
         self.colour = 'red'
+        self.currentInvunableCount = 0
+        image = pg.image.load(os.path.join('DoomPython' ,'resources', 'images', 'enemy.png'))
+        image =image.convert()
+        self.image = pg.transform.scale(image, (40, 40))
+        
 
     def move(self, targetX,targetY):
         dx = targetX*self.speed
@@ -41,19 +47,26 @@ class Enemy:
         self.move(targetX,targetY)
     def update(self):
         self.checkMovement()
+        if self.currentInvunableCount >0:self.currentInvunableCount -=1
         #self.draw()
     def collidesWithProjectile(self, projList):
         scale = ENEMY_SIZE_SCALE
         for projectile in projList:
-            if (abs(projectile.x - self.x)*100) <= self.radius*1.2 and (abs(projectile.y - self.y)*100) <= self.radius*1.2 :
-                self.health -= 1
-                if self.health == 5: self.colour ="yellow"
+            if (abs(projectile.x - self.x)*100) <= self.radius*1.2 and (abs(projectile.y - self.y)*100) <= self.radius*1.2 and self.currentInvunableCount==0:
+                self.health -= projectile.damage
+                self.currentInvunableCount = INVULNABLE_FRAME_COUNT
+                if self.health == 2: self.colour ="yellow"
+
                 if self.health == 0 :
                     return True
         return False
     
     def draw(self):
-        pg.draw.circle(self.game.screen,self.colour,(self.x*100,self.y*100),self.radius)
+        rect = self.image.get_rect()
+        rect.center = (self.x*100), (self.y*100)
+        self.game.screen.blit(self.image,rect)
+        pg.draw.rect(self.game.screen,self.colour,rect,1)
+        #pg.draw.circle(self.game.screen,self.colour,(self.x*100,self.y*100),self.radius)
     
     def randomMovement(self):
         if self.moveUntilDirectionChange == 0:

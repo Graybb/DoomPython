@@ -9,6 +9,7 @@ class Player:
         self.projectileSpeedModifier = 1
         self.cooldownCount = 15
         self.currentCooldown = 0
+        self.damageScale = 1
     
     def action(self):
         speed = self.projectileSpeedModifier
